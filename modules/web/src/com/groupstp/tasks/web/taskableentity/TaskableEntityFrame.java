@@ -1,10 +1,13 @@
 package com.groupstp.tasks.web.taskableentity;
 
 import com.groupstp.tasks.entity.Task;
+import com.groupstp.tasks.entity.TaskTemplate;
 import com.groupstp.tasks.entity.TaskTypical;
 import com.groupstp.tasks.entity.TaskableEntityImpl;
+import com.groupstp.tasks.web.task.TaskEdit;
 import com.groupstp.tasks.web.task.TaskListFrame;
 import com.haulmont.bali.util.ParamsMap;
+import com.haulmont.cuba.core.entity.annotation.Listeners;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
@@ -18,15 +21,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.groupstp.tasks.web.Utils.countEndDateFromStartDate;
 
 /**
  * Controller for component's main screen
- *
  */
+@Listeners("myListener")
 public class TaskableEntityFrame extends AbstractLookup {
 
     private static final Logger log = LoggerFactory.getLogger(TaskListFrame.class);
@@ -44,16 +47,16 @@ public class TaskableEntityFrame extends AbstractLookup {
     private ButtonsPanel buttonsPanel;
 
     @Inject
-    DataManager dataManager;
+    private DataManager dataManager;
 
     @Inject
-    Metadata metadata;
+    private Metadata metadata;
 
+    private TaskEdit taskEditWindow;
 
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-
         initFrame();
     }
 
@@ -69,9 +72,9 @@ public class TaskableEntityFrame extends AbstractLookup {
             @Override
             public void actionPerform(Component component) {
                 super.actionPerform(component);
-                Set<TaskableEntityImpl> selected = entitiesTable.getSelected();
+                Set<TaskableEntityImpl> selectedDocuments = entitiesTable.getSelected();
 
-                selected.forEach(taskableEntity -> {
+                selectedDocuments.forEach(document -> {
 
                     openLookup(TaskTypical.class, items -> {
                         if (items.size() == 0) {
@@ -79,15 +82,9 @@ public class TaskableEntityFrame extends AbstractLookup {
                         } else if (items.size() > 1) {
                             throw new IllegalArgumentException("Only one typical task can be selected!");
                         }
-                        TaskTypical taskTypical = (TaskTypical) items.iterator().next();
-                        Task task = metadata.create(Task.class);
-
-                        openEditor(task, WindowManager.OpenType.DIALOG, ParamsMap.of("taskTypical", taskTypical, "taskableEntity", taskableEntity));
+                        createTaskInWindows(document, items.iterator());
 
                     }, WindowManager.OpenType.DIALOG);
-
-                    dataManager.commit(taskableEntity);
-//                    log.info("Successfully assign task to document {} ", taskableEntity.getName());
                 });
             }
         });
@@ -96,23 +93,80 @@ public class TaskableEntityFrame extends AbstractLookup {
             @Override
             public void actionPerform(Component component) {
                 super.actionPerform(component);
-                Set<TaskableEntityImpl> selected = entitiesTable.getSelected();
+                Set<TaskableEntityImpl> selectedDocuments = entitiesTable.getSelected();
 
-                selected.forEach(task -> {
+                selectedDocuments.forEach(selectedDocument -> {
 
-                    //todo templates
+                    openLookup(TaskTemplate.class, selectedTemplate -> {
+                        if (selectedTemplate.size() == 0) {
+                            return;
+                        } else if (selectedTemplate.size() > 1) {
+                            throw new IllegalArgumentException("Only one typical task can be selected!");
+                        }
 
+                        assignTaskOnTemplate(selectedDocument, (TaskTemplate) selectedTemplate.iterator().next());
+
+                    }, WindowManager.OpenType.DIALOG);
                 });
             }
         });
 
     }
 
+    private void assignTaskOnTemplate(TaskableEntityImpl document, TaskTemplate template) {
+
+        if (template.getTasks().size() == 0) return;
+
+        Iterator<TaskTypical> iteratorTemplate = template.getTasks().iterator();
+
+        taskEditWindow = createTaskInWindows(document, iteratorTemplate);
+
+        taskEditWindow.addCloseWithCommitListener(() -> showOptionDialog(
+                getMessage("templateModeWindow"),
+                getMessage("templateModeAsk"),
+                MessageType.CONFIRMATION.modal(true),
+                new Action[]{
+                        new DialogAction(DialogAction.Type.OK, Action.Status.PRIMARY).withHandler(actionPerformedEvent -> createTaskWithoutWindows(iteratorTemplate, taskEditWindow.getItem())),
+                        new DialogAction(DialogAction.Type.NO, Action.Status.NORMAL).withHandler(actionPerformedEvent -> {
+                            while (iteratorTemplate.hasNext()) {
+                                createTaskInWindows(document, iteratorTemplate);
+                            }
+                        })
+                }));
+
+    }
+
+    private void createTaskWithoutWindows(Iterator<TaskTypical> iteratorTemplate, Task sampleTask) {
+        while (iteratorTemplate.hasNext()) {
+            TaskTypical template = iteratorTemplate.next();
+            Task newTask = metadata.create(Task.class);
+            newTask.setTaskTypical(template);
+            newTask.setStartDate(sampleTask.getStartDate());
+            newTask.setEndDate(countEndDateFromStartDate(sampleTask.getEndDate(), template.getInterval(), template.getIntervalType()));
+            newTask.setStatus(sampleTask.getStatus());
+            newTask.setControlNeeded(sampleTask.getControlNeeded());
+            newTask.setAuthor(sampleTask.getAuthor());
+            newTask.setPerformer(sampleTask.getPerformer());
+            newTask.setTaskableEntity(sampleTask.getTaskableEntity());
+            newTask.setComment(sampleTask.getComment());
+            dataManager.commit(newTask);
+        }
+    }
+
+    private TaskEdit createTaskInWindows(TaskableEntityImpl document, Iterator<TaskTypical> iteratorTemplate) {
+        TaskTypical taskTypical;
+        taskTypical = iteratorTemplate.next();
+        Task newTask = metadata.create(Task.class);
+
+        return (TaskEdit) openEditor(newTask, WindowManager.OpenType.DIALOG, ParamsMap.of("taskTypical", taskTypical, "taskableEntity", document));
+
+    }
+
     /**
      * Make the button from Strategy and add it to screen
      *
-     * @param cubaIcon   - example CubaIcon.CHECK.source()
-     * @param action - Pattern Strategy
+     * @param cubaIcon - example CubaIcon.CHECK.source()
+     * @param action   - Pattern Strategy
      */
     private void makeButton(CubaIcon cubaIcon, BaseAction action) {
         Button button = componentsFactory.createComponent(Button.class);

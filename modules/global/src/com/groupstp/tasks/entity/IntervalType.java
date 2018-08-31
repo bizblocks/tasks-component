@@ -7,10 +7,9 @@ import javax.annotation.Nullable;
 
 public enum IntervalType implements EnumClass<Integer> {
 
-    Minutes(10),
-    Hours(15),
-    Days(20),
-    Month(25);
+    Days(10),
+    Weeks(15),
+    Months(20);
 
     private Integer id;
 

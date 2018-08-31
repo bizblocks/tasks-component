@@ -1,1 +1,0 @@
-alter table tasks_task_template_task_typical_link rename to TASKS_TASK_TEMPLATE_TASK_TYPICAL_LINK__U48104 ;
