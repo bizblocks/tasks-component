@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.groupstp.tasks.web.taskableentity.TaskableEntityBrowse"
+        focusComponent="entityTable"
+        lookupComponent="entityTable"
+        messagesPack="com.groupstp.tasks.web.taskableentity">
+    <dsContext>
+        <groupDatasource id="entityDs"
+                         class="com.groupstp.tasks.entity.TaskableEntityImpl"
+                         view="_local">
+            <query>
+                <![CDATA[select e from tasks$TaskableEntityImpl e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="entityTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="entityTable"
+                datasource="entityDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="entityTable"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+            </columns>
+            <rows datasource="entityDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="entityTable.create"/>
+                <button id="editBtn"
+                        action="entityTable.edit"/>
+                <button id="removeBtn"
+                        action="entityTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

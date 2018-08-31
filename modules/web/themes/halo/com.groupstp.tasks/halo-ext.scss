@@ -1,0 +1,12 @@
+/* Define your theme modifications inside next mixin */
+@mixin com_groupstp_tasks-halo-ext {
+
+    .v-table-row.overdue-task {
+        color: red;
+    }
+
+    .v-table-row.normal-task {
+        color: black;
+    }
+
+}

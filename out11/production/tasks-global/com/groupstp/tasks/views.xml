@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+    <view class="com.groupstp.tasks.entity.Task"
+          extends="_local"
+          name="tasks-full">
+        <property name="user"
+                  view="_minimal"/>
+    </view>
+    <view class="com.groupstp.tasks.entity.Task"
+          extends="_minimal"
+          name="task-tree">
+        <property name="description"/>
+    </view>
+</views>

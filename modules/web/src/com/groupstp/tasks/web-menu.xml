@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
+    <item insertBefore="administration"
+          screen="tasks$Task.list"/>
+    <menu id="tasks"
+          insertBefore="administration">
+        <item screen="tasks$TaskTypical.browse"/>
+        <item screen="tasks$TaskTemplate.browse"/>
+        <item screen="tasks$Task.browse"/>
+    </menu>
+</menu-config>

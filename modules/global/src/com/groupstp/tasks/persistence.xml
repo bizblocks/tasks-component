@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             version="2.0">
+    <persistence-unit name="Tasks-STP"
+                      transaction-type="RESOURCE_LOCAL">
+        <class>com.groupstp.tasks.entity.Task</class>
+        <class>com.groupstp.tasks.entity.TaskTemplate</class>
+        <class>com.groupstp.tasks.entity.TaskableEntityImpl</class>
+        <class>com.groupstp.tasks.entity.TaskTypical</class>
+    </persistence-unit>
+</persistence>

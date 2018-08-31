@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+    <view class="com.groupstp.tasks.entity.Task"
+          extends="_local"
+          name="tasks-full">
+        <property name="author"
+                  view="_local"/>
+        <property name="performer"
+                  view="_local"/>
+        <property name="taskTypical"
+                  view="_minimal">
+            <property name="description"/>
+            <property name="interval"/>
+        </property>
+        <property name="taskableEntity"
+                  view="_minimal"/>
+    </view>
+    <view class="com.groupstp.tasks.entity.TaskTypical"
+          extends="_local"
+          name="taskTypical-full">
+        <property name="taskTemplates"
+                  view="_minimal">
+            <property name="name"/>
+            <property name="description"/>
+        </property>
+    </view>
+    <view class="com.groupstp.tasks.entity.TaskTemplate"
+          extends="_local"
+          name="taskTemplate-full">
+        <property name="tasks"
+                  view="_minimal">
+            <property name="description"/>
+            <property name="interval"/>
+            <property name="intervalType"/>
+        </property>
+    </view>
+</views>

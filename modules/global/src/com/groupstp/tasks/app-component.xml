@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<app-component xmlns="http://schemas.haulmont.com/cuba/app-component.xsd"
+               dependsOn="com.haulmont.cuba">
+    <module blocks="*"
+            name="global">
+        <artifact appJar="true"
+                  name="tasks-global"/>
+        <property name="cuba.persistenceConfig"
+                  value="+com/groupstp/tasks/persistence.xml"/>
+        <property name="cuba.metadataConfig"
+                  value="+com/groupstp/tasks/metadata.xml"/>
+        <property name="cuba.viewsConfig"
+                  value="+com/groupstp/tasks/views.xml"/>
+    </module>
+    <module blocks="core"
+            dependsOn="global"
+            name="core">
+        <artifact appJar="true"
+                  name="tasks-core"/>
+        <artifact classifier="db"
+                  configuration="dbscripts"
+                  ext="zip"
+                  name="tasks-core"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/groupstp/tasks/spring.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.groupstp.tasks.core"/>
+    </module>
+    <module blocks="web"
+            dependsOn="global"
+            name="web">
+        <artifact appJar="true"
+                  name="tasks-web"/>
+        <artifact classifier="web"
+                  configuration="webcontent"
+                  ext="zip"
+                  name="tasks-web"/>
+        <artifact configuration="themes"
+                  name="tasks-web-themes"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/groupstp/tasks/web-spring.xml"/>
+        <property name="cuba.dispatcherSpringContextConfig"
+                  value="+com/groupstp/tasks/web-dispatcher-spring.xml"/>
+        <property name="cuba.windowConfig"
+                  value="+com/groupstp/tasks/web-screens.xml"/>
+        <property name="cuba.menuConfig"
+                  value="+com/groupstp/tasks/web-menu.xml"/>
+        <property name="cuba.permissionConfig"
+                  value="+com/groupstp/tasks/web-permissions.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.groupstp.tasks.web"/>
+    </module>
+    <module name="web-themes">
+        <artifact name="tasks-web-themes"/>
+    </module>
+</app-component>
