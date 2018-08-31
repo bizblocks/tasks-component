@@ -6,13 +6,6 @@
         lookupComponent="tasksTable"
         messagesPack="com.groupstp.tasks.web.task">
     <dsContext>
-        <collectionDatasource id="taskableEntityDs"
-                              class="com.groupstp.tasks.entity.TaskableEntityImpl"
-                              view="_local">
-            <query>
-                <![CDATA[select e from tasks$TaskableEntityImpl e]]>
-            </query>
-        </collectionDatasource>
         <groupDatasource id="tasksDs"
                          class="com.groupstp.tasks.entity.Task"
                          view="tasks-full">

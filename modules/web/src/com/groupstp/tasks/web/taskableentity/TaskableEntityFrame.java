@@ -1,9 +1,6 @@
 package com.groupstp.tasks.web.taskableentity;
 
-import com.groupstp.tasks.entity.Task;
-import com.groupstp.tasks.entity.TaskTemplate;
-import com.groupstp.tasks.entity.TaskTypical;
-import com.groupstp.tasks.entity.TaskableEntityImpl;
+import com.groupstp.tasks.entity.*;
 import com.groupstp.tasks.web.task.TaskEdit;
 import com.groupstp.tasks.web.task.TaskListFrame;
 import com.haulmont.bali.util.ParamsMap;
@@ -22,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.groupstp.tasks.web.Utils.countEndDateFromStartDate;
 
@@ -113,7 +109,7 @@ public class TaskableEntityFrame extends AbstractLookup {
 
     }
 
-    private void assignTaskOnTemplate(TaskableEntityImpl document, TaskTemplate template) {
+    private void assignTaskOnTemplate(TaskableEntity document, TaskTemplate template) {
 
         if (template.getTasks().size() == 0) return;
 
@@ -124,7 +120,7 @@ public class TaskableEntityFrame extends AbstractLookup {
         taskEditWindow.addCloseWithCommitListener(() -> showOptionDialog(
                 getMessage("templateModeWindow"),
                 getMessage("templateModeAsk"),
-                MessageType.CONFIRMATION.modal(true),
+                MessageType.CONFIRMATION,
                 new Action[]{
                         new DialogAction(DialogAction.Type.OK, Action.Status.PRIMARY).withHandler(actionPerformedEvent -> createTaskWithoutWindows(iteratorTemplate, taskEditWindow.getItem())),
                         new DialogAction(DialogAction.Type.NO, Action.Status.NORMAL).withHandler(actionPerformedEvent -> {
@@ -153,7 +149,7 @@ public class TaskableEntityFrame extends AbstractLookup {
         }
     }
 
-    private TaskEdit createTaskInWindows(TaskableEntityImpl document, Iterator<TaskTypical> iteratorTemplate) {
+    private TaskEdit createTaskInWindows(TaskableEntity document, Iterator<TaskTypical> iteratorTemplate) {
         TaskTypical taskTypical;
         taskTypical = iteratorTemplate.next();
         Task newTask = metadata.create(Task.class);

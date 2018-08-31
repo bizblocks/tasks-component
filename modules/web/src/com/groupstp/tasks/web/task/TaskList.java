@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public class TaskList extends AbstractLookup {
 
-    private static final String TASKABLE_ENTITY_FRAME = "tasks$TaskableEntityImpl.browse.frame";
-    public static final String TASKABLE_ENTITY_NAME = "taskableEntityImpl";
+    private static final String TASKABLE_ENTITY_FRAME = "tasks$TaskableEntity.browse.frame";
+    public static final String TASKABLE_ENTITY_NAME = "taskableEntity";
 
     private static final String TASK_LIST_FRAME = "tasks$Task.browse.frame";
     public static final String MYTASK = "performer";

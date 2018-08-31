@@ -1,9 +1,6 @@
 package com.groupstp.tasks.web.task;
 
-import com.groupstp.tasks.entity.Task;
-import com.groupstp.tasks.entity.TaskStatus;
-import com.groupstp.tasks.entity.TaskTypical;
-import com.groupstp.tasks.entity.TaskableEntityImpl;
+import com.groupstp.tasks.entity.*;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.components.*;
 
@@ -22,7 +19,7 @@ public class TaskEdit extends AbstractEditor<Task> {
     UserSessionSource userSessionSource;
 
     private TaskTypical taskTypical;
-    private TaskableEntityImpl taskableEntity;
+    private TaskableEntity taskableEntity;
 
 
     @Override
@@ -30,7 +27,7 @@ public class TaskEdit extends AbstractEditor<Task> {
         super.init(params);
 
         taskTypical = (TaskTypical) params.get("taskTypical");
-        taskableEntity = (TaskableEntityImpl) params.get("taskableEntity");
+        taskableEntity = (TaskableEntity) params.get("taskableEntity");
 
         if (taskTypical != null && taskTypical.getInterval() > 0 && taskTypical.getIntervalType() != null) {
 
